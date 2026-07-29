@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: amk_postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: change_me_in_production
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: amk_backend
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AUTH_DATABASE_URL: postgresql://amk_auth_user:auth_secret_pw@postgres:5432/amk_auth
+      CATALOG_DATABASE_URL: postgresql://amk_catalog_user:catalog_secret_pw@postgres:5432/amk_catalog
+      NODE_ENV: production
+      PORT: 4000
+    env_file:
+      - ./backend/.env
+
+volumes:
+  pgdata:

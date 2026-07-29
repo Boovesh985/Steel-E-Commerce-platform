@@ -1,0 +1,48 @@
+{
+  "name": "amk-steels-backend",
+  "version": "1.0.0",
+  "description": "AMK Steels e-commerce platform backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "render:build": "npm install && npx prisma generate --schema=prisma/auth/schema.prisma && npx prisma generate --schema=prisma/catalog/schema.prisma",
+    "prisma:generate": "npx prisma generate --schema=prisma/auth/schema.prisma && npx prisma generate --schema=prisma/catalog/schema.prisma",
+    "prisma:migrate:auth": "npx prisma migrate dev --schema=prisma/auth/schema.prisma --name init",
+    "prisma:migrate:catalog": "npx prisma migrate dev --schema=prisma/catalog/schema.prisma --name init",
+    "prisma:migrate": "npm run prisma:migrate:auth && npm run prisma:migrate:catalog",
+    "prisma:push": "npx prisma db push --schema=prisma/auth/schema.prisma && npx prisma db push --schema=prisma/catalog/schema.prisma",
+    "seed:admin": "node scripts/seed-admin.js",
+    "seed:products": "node scripts/import-products.js",
+    "seed:all": "npm run seed:admin && npm run seed:products",
+    "setup": "npm run prisma:generate && npm run prisma:push && npm run seed:all"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "argon2": "^0.45.1",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
+    "firebase-admin": "^14.2.0",
+    "helmet": "^8.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.2.0",
+    "pg": "^8.22.0",
+    "razorpay": "^2.9.6",
+    "resend": "^6.17.2",
+    "uuid": "^14.0.1",
+    "xlsx": "^0.18.5",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prisma": "^6.19.3"
+  }
+}

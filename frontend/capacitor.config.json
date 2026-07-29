@@ -1,0 +1,30 @@
+{
+  "appId": "com.amksteels.app",
+  "appName": "AMK Steels",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#0F172A",
+    "allowMixedContent": true,
+    "buildOptions": {
+      "keystorePath": "release-key.keystore",
+      "keystoreAlias": "amksteels"
+    }
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "launchAutoHide": true,
+      "backgroundColor": "#0F172A",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0F172A"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+# ── Environment files ──
+.env
+.env.local
+.env.neon
+backend/.env
+backend/.env.neon
+
+# ── Firebase service account keys ──
+*-firebase-adminsdk-*.json
+firebase-service-account*.json
+
+# ── API keys / secrets ──
+api-keys.csv
+*.keystore
+*.jks
+
+# ── Node ──
+node_modules/
+
+# ── Logs ──
+*.log
+
+# ── Build output ──
+dist/
+build/
+
+# ── Generated Prisma clients (regenerated on deploy) ──
+backend/generated/
+
+# ── Android build artifacts ──
+frontend/android/app/build/
+frontend/android/.gradle/
+frontend/android/app/release/
+
+# ── OS files ──
+.DS_Store
+Thumbs.db
+
+# -- APK builds --
+*.apk
+
+backend/data/
+backend/scripts/create-neon-dbs.js

@@ -1,0 +1,9 @@
+DELETE FROM "Review";
+DELETE FROM "WishlistItem";
+DELETE FROM "TrackingEvent";
+DELETE FROM "OrderItem";
+DELETE FROM "Order";
+DELETE FROM "CartItem";
+DELETE FROM "Cart";
+DELETE FROM "Address";
+DELETE FROM "User";

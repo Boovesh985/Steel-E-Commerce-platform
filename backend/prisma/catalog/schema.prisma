@@ -1,0 +1,88 @@
+// Prisma schema for amk_catalog database
+// Contains: categories, products, images, inventory, warehouses, price history
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CATALOG_DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../generated/catalog-client"
+}
+
+model Category {
+  id       String     @id @default(uuid())
+  name     String
+  slug     String     @unique
+  parentId String?
+  parent   Category?  @relation("SubCategories", fields: [parentId], references: [id])
+  children Category[] @relation("SubCategories")
+  imageUrl String?
+  products Product[]
+}
+
+model Product {
+  id             String         @id @default(uuid())
+  categoryId     String
+  category       Category       @relation(fields: [categoryId], references: [id])
+  name           String
+  slug           String         @unique
+  brand          String?
+  sku            String         @unique
+  hsnCode        String?
+  gstRate        Decimal        @default(18)
+  description    String?
+  baseUnit       String         // kg, ton, piece, meter, bundle, nos
+  pricePerUnit   Decimal
+  discountPrice  Decimal?
+  minOrderQty    Int            @default(1)
+  specifications Json           // grade, diameterMm, lengthM, thicknessMm, weightKg, etc.
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  images       ProductImage[]
+  inventory    Inventory[]
+  priceHistory PriceHistory[]
+}
+
+model ProductImage {
+  id           String  @id @default(uuid())
+  productId    String
+  product      Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url          String
+  displayOrder Int     @default(0)
+}
+
+model Warehouse {
+  id        String      @id @default(uuid())
+  name      String
+  city      String
+  state     String
+  pincode   String
+  phone     String?
+  inventory Inventory[]
+}
+
+model Inventory {
+  id                String    @id @default(uuid())
+  productId         String
+  product           Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  warehouseId       String
+  warehouse         Warehouse @relation(fields: [warehouseId], references: [id])
+  quantityAvailable Int       @default(0)
+  quantityReserved  Int       @default(0)
+  reorderLevel      Int       @default(10)
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([productId, warehouseId])
+}
+
+model PriceHistory {
+  id            String   @id @default(uuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  price         Decimal
+  effectiveFrom DateTime @default(now())
+}

@@ -1,0 +1,167 @@
+// Prisma schema for amk_auth database
+// Contains: users, auth tokens, addresses, cart, orders, tracking, reviews, wishlist
+
+datasource db {
+  provider = "postgresql"
+  url      = env("AUTH_DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../generated/auth-client"
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+  STAFF
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  phone         String?   @unique
+  passwordHash  String?
+  role          Role      @default(CUSTOMER)
+  gstin         String?
+  isActive      Boolean   @default(true)
+  emailVerified Boolean   @default(false)
+  phoneVerified Boolean   @default(false)
+  googleId      String?   @unique
+  avatarUrl     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  addresses     Address[]
+  cart          Cart?
+  orders        Order[]
+  reviews       Review[]
+  wishlist      WishlistItem[]
+  refreshTokens RefreshToken[]
+}
+
+model Address {
+  id        String  @id @default(uuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String
+  line1     String
+  line2     String?
+  city      String
+  state     String
+  pincode   String
+  isDefault Boolean @default(false)
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([tokenHash])
+  @@index([userId])
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id          String  @id @default(uuid())
+  cartId      String
+  cart        Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId   String
+  productName String
+  unitPrice   Decimal
+  quantity    Int
+}
+
+model Order {
+  id              String          @id @default(uuid())
+  orderNumber     String          @unique
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+  trackingEvents  TrackingEvent[]
+  shippingAddress Json
+  buyerGstin      String?
+  subtotal        Decimal
+  gstAmount       Decimal
+  totalAmount     Decimal
+  status          OrderStatus     @default(PENDING)
+  paymentStatus   PaymentStatus   @default(PENDING)
+  paymentId       String?
+  razorpayOrderId String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model OrderItem {
+  id          String  @id @default(uuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  productName String
+  specs       Json
+  unitPrice   Decimal
+  quantity    Int
+  subtotal    Decimal
+}
+
+model TrackingEvent {
+  id        String      @id @default(uuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  note      String?
+  location  String?
+  timestamp DateTime    @default(now())
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model WishlistItem {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
