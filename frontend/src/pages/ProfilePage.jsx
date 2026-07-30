@@ -261,14 +261,16 @@ export default function ProfilePage() {
               </div>
               {/* Show verified badge + Change button, or Send OTP / Verify button, or Not verified */}
               {phoneVerified && !isEditingPhone ? (
-                <div className="flex items-center gap-1 h-11">
-                  <div className="flex items-center gap-1 px-2 text-green-600">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span className="text-body-sm font-medium">Verified</span>
+                <div className="flex items-center gap-2 h-11">
+                  <div className="flex items-center gap-1.5 px-3 py-2 bg-green-50 text-green-700 rounded-lg border border-green-200">
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    <span className="text-body-sm font-semibold">Verified</span>
                   </div>
-                  <button
+                  <Button
                     type="button"
-                    className="text-body-sm text-primary-600 hover:text-primary-700 font-medium underline whitespace-nowrap px-1"
+                    variant="outline"
+                    size="sm"
+                    className="h-11 whitespace-nowrap"
                     onClick={() => {
                       setIsEditingPhone(true);
                       setPhoneVerified(false);
@@ -280,7 +282,7 @@ export default function ProfilePage() {
                     }}
                   >
                     Change
-                  </button>
+                  </Button>
                 </div>
               ) : profileForm.phone && PHONE_REGEX.test(profileForm.phone) ? (
                 <Button
