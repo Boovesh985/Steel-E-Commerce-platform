@@ -41,6 +41,7 @@ export default function ProfilePage() {
   const [otpCode, setOtpCode] = useState('');
   const [phoneVerified, setPhoneVerified] = useState(!!user?.phoneVerified);
   const [phoneVerificationToken, setPhoneVerificationToken] = useState(null);
+  const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [sendingOtp, setSendingOtp] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [phoneError, setPhoneError] = useState('');
@@ -126,9 +127,8 @@ export default function ProfilePage() {
       setPhoneError('A valid 10-digit phone number is required.');
       return;
     }
-    // If phone is present but not verified (new or existing), block save
-    const needsPhoneVerification = !phoneVerified && !(phoneUnchanged && user?.phoneVerified);
-    if (needsPhoneVerification) {
+    // If editing phone but not verified yet, block save
+    if (isEditingPhone && !phoneVerified) {
       setPhoneError('Please verify your phone number with OTP before saving.');
       return;
     }
@@ -148,6 +148,7 @@ export default function ProfilePage() {
       setUser(updatedUser);
       setPhoneVerified(!!updatedUser.phoneVerified);
       setPhoneVerificationToken(null);
+      setIsEditingPhone(false);
       setPhoneError('');
       useToastStore.getState().success('Profile updated.');
     } catch (err) {
@@ -243,12 +244,11 @@ export default function ProfilePage() {
                   leftIcon={<Phone className="w-4 h-4" />}
                   value={profileForm.phone}
                   error={phoneError}
-                  disabled={phoneVerified && phoneUnchanged && !!user?.phoneVerified}
+                  disabled={phoneVerified && !isEditingPhone}
                   onChange={(e) => {
                     const val = e.target.value.replace(/\D/g, '').slice(0, 10);
                     setProfileForm((f) => ({ ...f, phone: val }));
-                    // Reset OTP state when phone changes
-                    if (val !== profileForm.phone) {
+                    if (val !== user?.phone) {
                       setPhoneVerified(false);
                       setPhoneVerificationToken(null);
                       setOtpSent(false);
@@ -260,7 +260,7 @@ export default function ProfilePage() {
                 />
               </div>
               {/* Show verified badge + Change button, or Send OTP / Verify button, or Not verified */}
-              {phoneVerified || (phoneUnchanged && user?.phoneVerified) ? (
+              {phoneVerified && !isEditingPhone ? (
                 <div className="flex items-center gap-1 h-11">
                   <div className="flex items-center gap-1 px-2 text-green-600">
                     <CheckCircle2 className="w-4 h-4" />
@@ -268,8 +268,9 @@ export default function ProfilePage() {
                   </div>
                   <button
                     type="button"
-                    className="text-body-sm text-primary-600 hover:text-primary-700 font-medium underline whitespace-nowrap"
+                    className="text-body-sm text-primary-600 hover:text-primary-700 font-medium underline whitespace-nowrap px-1"
                     onClick={() => {
+                      setIsEditingPhone(true);
                       setPhoneVerified(false);
                       setPhoneVerificationToken(null);
                       setOtpSent(false);
