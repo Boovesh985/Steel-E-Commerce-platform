@@ -46,9 +46,12 @@ function hashOtp(otp) {
  */
 async function sendViaSms(phone, otp) {
   if (!env.FAST2SMS_API_KEY) {
-    console.log(`📱 [DEV] OTP for ${phone}: ${otp}`);
-    console.log(`⚠️  Set FAST2SMS_API_KEY in .env to send real SMS.`);
-    return { success: true, dev: true };
+    if (env.NODE_ENV === 'development') {
+      console.log(`📱 [DEV] OTP for ${phone}: ${otp}`);
+      console.log(`⚠️  Set FAST2SMS_API_KEY in .env to send real SMS.`);
+      return { success: true, dev: true };
+    }
+    throw new Error('SMS service not configured. Contact support.');
   }
 
   try {
@@ -69,21 +72,15 @@ async function sendViaSms(phone, otp) {
     const data = await response.json();
 
     if (!data.return) {
-      console.error('Fast2SMS error:', data);
-      // Fall back to console logging so users aren't blocked
-      console.log(`📱 [FALLBACK] OTP for ${phone}: ${otp}`);
-      console.log(`⚠️  Fast2SMS API returned error — OTP logged to server console.`);
-      console.log(`   Fix: Complete website verification at https://www.fast2sms.com → OTP Message menu.`);
-      return { success: true, dev: true };
+      console.error('Fast2SMS error:', JSON.stringify(data));
+      throw new Error(data.message || 'Failed to send OTP. Please try again later.');
     }
 
     console.log(`✅ OTP sent to ${phone} via Fast2SMS (request: ${data.request_id})`);
     return { success: true, requestId: data.request_id };
   } catch (err) {
-    // Fall back gracefully on network/API errors
     console.error('Fast2SMS request failed:', err.message);
-    console.log(`📱 [FALLBACK] OTP for ${phone}: ${otp}`);
-    return { success: true, dev: true };
+    throw err;
   }
 }
 
