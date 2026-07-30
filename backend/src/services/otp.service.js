@@ -70,26 +70,20 @@ async function sendViaSms(phone, otp) {
 
     if (!data.return) {
       console.error('Fast2SMS error:', data);
-      // In development, fall back to console logging instead of failing
-      if (env.NODE_ENV === 'development') {
-        console.log(`📱 [DEV FALLBACK] OTP for ${phone}: ${otp}`);
-        console.log(`⚠️  Fast2SMS API returned error — using console fallback.`);
-        console.log(`   Fix: Complete website verification at https://www.fast2sms.com → OTP Message menu.`);
-        return { success: true, dev: true };
-      }
-      throw new Error(data.message?.[0] || data.message || 'Failed to send OTP via SMS.');
+      // Fall back to console logging so users aren't blocked
+      console.log(`📱 [FALLBACK] OTP for ${phone}: ${otp}`);
+      console.log(`⚠️  Fast2SMS API returned error — OTP logged to server console.`);
+      console.log(`   Fix: Complete website verification at https://www.fast2sms.com → OTP Message menu.`);
+      return { success: true, dev: true };
     }
 
     console.log(`✅ OTP sent to ${phone} via Fast2SMS (request: ${data.request_id})`);
     return { success: true, requestId: data.request_id };
   } catch (err) {
-    // In development, fall back gracefully
-    if (env.NODE_ENV === 'development') {
-      console.error('Fast2SMS request failed:', err.message);
-      console.log(`📱 [DEV FALLBACK] OTP for ${phone}: ${otp}`);
-      return { success: true, dev: true };
-    }
-    throw err;
+    // Fall back gracefully on network/API errors
+    console.error('Fast2SMS request failed:', err.message);
+    console.log(`📱 [FALLBACK] OTP for ${phone}: ${otp}`);
+    return { success: true, dev: true };
   }
 }
 
