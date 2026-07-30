@@ -7,6 +7,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useToastStore } from '../stores/toastStore';
 import { apiErrorMessage } from '../api/client';
 import { useRecaptcha } from '../hooks/useRecaptcha';
+import { usePhoneAuth } from '../hooks/usePhoneAuth';
 import { cartKeys } from '../hooks/useCart';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -29,6 +30,7 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { getToken } = useRecaptcha();
+  const { sendOtp: firebaseSendOtp, verifyOtp: firebaseVerifyOtp, sending: firebaseSending, verifying: firebaseVerifying, cleanup: cleanupPhone } = usePhoneAuth();
 
   // Only name, phone and gstin are editable — email is fixed by the backend.
   const [profileForm, setProfileForm] = useState({ name: user?.name || '', phone: user?.phone || '', gstin: user?.gstin || '' });
@@ -65,12 +67,12 @@ export default function ProfilePage() {
     setSendingOtp(true);
     setPhoneError('');
     try {
-      await authApi.sendOtp(profileForm.phone, user?.id);
+      await firebaseSendOtp(profileForm.phone, 'profile-send-otp-btn');
       setOtpSent(true);
       setOtpCountdown(30);
       useToastStore.getState().success(`OTP sent to +91 ${profileForm.phone}`);
     } catch (err) {
-      setPhoneError(apiErrorMessage(err, 'Failed to send OTP.'));
+      setPhoneError(err.message || 'Failed to send OTP.');
     } finally {
       setSendingOtp(false);
     }
@@ -84,15 +86,15 @@ export default function ProfilePage() {
     setVerifyingOtp(true);
     setOtpError('');
     try {
-      const res = await authApi.verifyOtp(profileForm.phone, otpCode);
+      const res = await firebaseVerifyOtp(otpCode);
       setPhoneVerificationToken(res.phoneVerificationToken);
       setPhoneVerified(true);
       setOtpSent(false);
       setOtpCode('');
-      setPhoneError('');  // Clear any previous save error
+      setPhoneError('');
       useToastStore.getState().success('Phone number verified!');
     } catch (err) {
-      setOtpError(apiErrorMessage(err, 'Invalid OTP.'));
+      setOtpError(err.message || 'Invalid OTP.');
     } finally {
       setVerifyingOtp(false);
     }
@@ -286,6 +288,7 @@ export default function ProfilePage() {
                 </div>
               ) : profileForm.phone && PHONE_REGEX.test(profileForm.phone) ? (
                 <Button
+                  id="profile-send-otp-btn"
                   type="button"
                   size="sm"
                   onClick={handleSendOtp}

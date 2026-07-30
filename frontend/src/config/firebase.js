@@ -1,13 +1,14 @@
 /**
  * Firebase Web SDK configuration.
- * Used for Google Sign-In only.
- * Phone OTP is now handled by Fast2SMS via the backend.
+ * Used for Google Sign-In and Phone OTP verification.
  */
 import { initializeApp } from 'firebase/app';
 import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
 } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -28,4 +29,5 @@ auth.useDeviceLanguage();
 
 const googleProvider = new GoogleAuthProvider();
 
-export { auth, googleProvider, signInWithPopup };
+export { auth, googleProvider, signInWithPopup, signInWithPhoneNumber, RecaptchaVerifier };
+

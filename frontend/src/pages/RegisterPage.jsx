@@ -6,6 +6,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useToastStore } from '../stores/toastStore';
 import { apiErrorMessage } from '../api/client';
 import { useRecaptcha } from '../hooks/useRecaptcha';
+import { usePhoneAuth } from '../hooks/usePhoneAuth';
 import { auth, googleProvider, signInWithPopup } from '../config/firebase';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -20,6 +21,7 @@ export default function RegisterPage() {
   const loginStore = useAuthStore((s) => s.login);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated());
   const { getToken } = useRecaptcha();
+  const { sendOtp: firebaseSendOtp, verifyOtp: firebaseVerifyOtp, sending: firebaseSending, verifying: firebaseVerifying, cleanup: cleanupPhone } = usePhoneAuth();
 
   // Fix #2: Redirect if already logged in
   useEffect(() => {
@@ -61,7 +63,7 @@ export default function RegisterPage() {
     return next;
   };
 
-  // ── Send OTP (via backend Fast2SMS) ───────────────────────────────────
+  // ── Send OTP (via Firebase Phone Auth) ─────────────────────────────────
   const handleSendOtp = async () => {
     if (!PHONE_REGEX.test(form.phone)) {
       setErrors((e) => ({ ...e, phone: '10-digit Indian mobile number, starting 6-9.' }));
@@ -87,19 +89,19 @@ export default function RegisterPage() {
         return;
       }
 
-      const res = await authApi.sendOtp(form.phone);
+      await firebaseSendOtp(form.phone, 'reg-send-otp-btn');
       setOtpSent(true);
       setOtpCountdown(30);
-      useToastStore.getState().success(res?.message || `OTP sent to +91 ${form.phone}`);
+      useToastStore.getState().success(`OTP sent to +91 ${form.phone}`);
     } catch (err) {
       console.error('OTP send error:', err);
-      setErrors((e) => ({ ...e, phone: apiErrorMessage(err, 'Failed to send OTP. Please try again.') }));
+      setErrors((e) => ({ ...e, phone: err.message || 'Failed to send OTP. Please try again.' }));
     } finally {
       setSendingOtp(false);
     }
   };
 
-  // ── Verify OTP (via backend) ──────────────────────────────────────────
+  // ── Verify OTP (via Firebase Phone Auth) ──────────────────────────────
   const handleVerifyOtp = async () => {
     if (otpCode.length !== 6) {
       setErrors((e) => ({ ...e, otp: 'Enter the 6-digit OTP.' }));
@@ -108,13 +110,13 @@ export default function RegisterPage() {
     setVerifyingOtp(true);
     setErrors((e) => ({ ...e, otp: undefined }));
     try {
-      const res = await authApi.verifyOtp(form.phone, otpCode);
+      const res = await firebaseVerifyOtp(otpCode);
       setPhoneVerificationToken(res.phoneVerificationToken);
       setPhoneVerified(true);
       useToastStore.getState().success('Phone number verified!');
     } catch (err) {
       console.error('OTP verify error:', err);
-      setErrors((e) => ({ ...e, otp: apiErrorMessage(err, 'Invalid OTP. Please check and try again.') }));
+      setErrors((e) => ({ ...e, otp: err.message || 'Invalid OTP. Please check and try again.' }));
     } finally {
       setVerifyingOtp(false);
     }
@@ -241,12 +243,13 @@ export default function RegisterPage() {
               </div>
               {!phoneVerified && (
                 <button
+                  id="reg-send-otp-btn"
                   type="button"
                   onClick={handleSendOtp}
-                  disabled={sendingOtp || form.phone.length !== 10 || otpCountdown > 0}
+                  disabled={sendingOtp || firebaseSending || form.phone.length !== 10 || otpCountdown > 0}
                   className="h-11 px-4 rounded-standard bg-primary text-white text-body-sm font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0"
                 >
-                  {sendingOtp ? 'Sending...' : otpCountdown > 0 ? `Resend (${otpCountdown}s)` : otpSent ? 'Resend OTP' : 'Send OTP'}
+                  {sendingOtp || firebaseSending ? 'Sending...' : otpCountdown > 0 ? `Resend (${otpCountdown}s)` : otpSent ? 'Resend OTP' : 'Send OTP'}
                 </button>
               )}
               {phoneVerified && (

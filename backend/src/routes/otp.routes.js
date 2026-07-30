@@ -1,10 +1,7 @@
 /**
- * OTP routes — send, verify, resend, check-availability.
- *
- * These routes use optionalAuth: if a valid token is present, req.user is set,
- * but the route still works for unauthenticated callers (e.g. during registration).
- * This enables safeExcludeUserId() in the controller to trust excludeUserId
- * only when authenticated.
+ * OTP routes — check-availability only.
+ * Phone OTP send/verify is now handled by Firebase Phone Auth on the frontend.
+ * The backend only verifies the Firebase ID token during registration/profile update.
  */
 const { Router } = require('express');
 const { authLimiter } = require('../middleware/rateLimiter');
@@ -38,9 +35,7 @@ function optionalAuth(req, _res, next) {
 
 router.use(optionalAuth);
 
-router.post('/send', ctrl.sendOtp);
-router.post('/verify', ctrl.verifyOtp);
-router.post('/resend', ctrl.resendOtp);
+// Only check-availability remains — send/verify/resend handled by Firebase
 router.post('/check-availability', ctrl.checkAvailability);
 
 module.exports = router;

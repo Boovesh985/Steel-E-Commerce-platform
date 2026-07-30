@@ -44,6 +44,5 @@ module.exports = {
   EMAIL_FROM: process.env.EMAIL_FROM || 'AMK Steels <onboarding@resend.dev>',
   FRONTEND_URL: process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'http://localhost:5173',
   FIREBASE_SERVICE_ACCOUNT_PATH: process.env.FIREBASE_SERVICE_ACCOUNT_PATH || '',
-  FAST2SMS_API_KEY: process.env.FAST2SMS_API_KEY || '',
   RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY || '',
 };

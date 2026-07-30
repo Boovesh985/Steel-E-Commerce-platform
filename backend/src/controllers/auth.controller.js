@@ -12,11 +12,11 @@ async function register(req, res, next) {
   try {
     const { name, email, phone, password, gstin, phoneVerificationToken } = req.body;
 
-    // Verify phone number via our OTP verification token
+    // Verify phone number via Firebase Phone Auth token
     let isPhoneVerified = false;
     if (phoneVerificationToken) {
       try {
-        const { phone: verifiedPhone } = otpService.verifyPhoneToken(phoneVerificationToken);
+        const { phone: verifiedPhone } = await otpService.verifyPhoneToken(phoneVerificationToken);
         if (verifiedPhone === phone) {
           isPhoneVerified = true;
         } else {

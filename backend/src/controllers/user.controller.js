@@ -45,7 +45,7 @@ async function updateProfile(req, res, next) {
       // Phone is being changed — require OTP verification
       if (phoneVerificationToken) {
         try {
-          const { phone: verifiedPhone } = otpService.verifyPhoneToken(phoneVerificationToken);
+          const { phone: verifiedPhone } = await otpService.verifyPhoneToken(phoneVerificationToken);
           if (verifiedPhone === phone) {
             phoneVerified = true;
           } else {
@@ -62,7 +62,7 @@ async function updateProfile(req, res, next) {
     } else if (phone && phone === currentUser.phone && !currentUser.phoneVerified && phoneVerificationToken) {
       // Same phone but unverified — user is verifying existing phone
       try {
-        const { phone: verifiedPhone } = otpService.verifyPhoneToken(phoneVerificationToken);
+        const { phone: verifiedPhone } = await otpService.verifyPhoneToken(phoneVerificationToken);
         if (verifiedPhone === phone) {
           phoneVerified = true;
         } else {

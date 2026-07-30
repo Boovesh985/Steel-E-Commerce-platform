@@ -6,12 +6,7 @@ export const authApi = {
   // Indian mobile number starting 6-9; gstin is validated server-side if sent.
   register: (payload) => apiClient.post('/auth/register', payload).then((r) => r.data),
 
-  // OTP verification via Fast2SMS (backend-managed)
-  sendOtp: (phone, excludeUserId) => apiClient.post('/otp/send', { phone, excludeUserId }).then((r) => r.data),
-  verifyOtp: (phone, otp) => apiClient.post('/otp/verify', { phone, otp }).then((r) => r.data),
-  resendOtp: (phone, excludeUserId) => apiClient.post('/otp/resend', { phone, excludeUserId }).then((r) => r.data),
-
-  // Check if email/phone is already in use (for pre-validation)
+  // Check if email/phone is already in use (for pre-validation before Firebase OTP)
   checkAvailability: (payload) => apiClient.post('/otp/check-availability', payload).then((r) => r.data),
 
   login: (payload) => apiClient.post('/auth/login', payload).then((r) => r.data),
