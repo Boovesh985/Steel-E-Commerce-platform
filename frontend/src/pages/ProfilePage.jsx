@@ -243,13 +243,13 @@ export default function ProfilePage() {
                   leftIcon={<Phone className="w-4 h-4" />}
                   value={profileForm.phone}
                   error={phoneError}
-                  disabled={phoneVerified && !phoneUnchanged}
+                  disabled={phoneVerified && phoneUnchanged && !!user?.phoneVerified}
                   onChange={(e) => {
                     const val = e.target.value.replace(/\D/g, '').slice(0, 10);
                     setProfileForm((f) => ({ ...f, phone: val }));
                     // Reset OTP state when phone changes
                     if (val !== profileForm.phone) {
-                      setPhoneVerified(phoneUnchanged && !!user?.phoneVerified);
+                      setPhoneVerified(false);
                       setPhoneVerificationToken(null);
                       setOtpSent(false);
                       setOtpCode('');
@@ -259,11 +259,27 @@ export default function ProfilePage() {
                   }}
                 />
               </div>
-              {/* Show verified badge or Send OTP / Resend button or Not verified */}
+              {/* Show verified badge + Change button, or Send OTP / Verify button, or Not verified */}
               {phoneVerified || (phoneUnchanged && user?.phoneVerified) ? (
-                <div className="flex items-center gap-1 h-11 px-3 text-green-600">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span className="text-body-sm font-medium">Verified</span>
+                <div className="flex items-center gap-1 h-11">
+                  <div className="flex items-center gap-1 px-2 text-green-600">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span className="text-body-sm font-medium">Verified</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="text-body-sm text-primary-600 hover:text-primary-700 font-medium underline whitespace-nowrap"
+                    onClick={() => {
+                      setPhoneVerified(false);
+                      setPhoneVerificationToken(null);
+                      setOtpSent(false);
+                      setOtpCode('');
+                      setPhoneError('');
+                      setOtpError('');
+                    }}
+                  >
+                    Change
+                  </button>
                 </div>
               ) : profileForm.phone && PHONE_REGEX.test(profileForm.phone) ? (
                 <Button
