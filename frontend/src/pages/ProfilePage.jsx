@@ -129,10 +129,10 @@ export default function ProfilePage() {
       setPhoneError('A valid 10-digit phone number is required.');
       return;
     }
-    // If editing phone but not verified yet, block save
+    // If editing phone and verified via Firebase, include token; otherwise save as unverified
     if (isEditingPhone && !phoneVerified) {
-      setPhoneError('Please verify your phone number with OTP before saving.');
-      return;
+      // Phone changed without verification — will be saved as unverified
+      console.log('Phone will be saved as unverified.');
     }
     setSavingProfile(true);
     try {

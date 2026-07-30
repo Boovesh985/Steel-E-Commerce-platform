@@ -59,7 +59,6 @@ export default function RegisterPage() {
     if (form.password !== form.confirmPassword) next.confirmPassword = 'Passwords do not match.';
     if (!PHONE_REGEX.test(form.phone)) next.phone = '10-digit Indian mobile number, starting 6-9.';
     if (form.gstin && !GSTIN_REGEX.test(form.gstin)) next.gstin = 'Enter a valid 15-character GSTIN.';
-    if (!phoneVerified) next.phone = 'Please verify your phone number with OTP.';
     return next;
   };
 
@@ -298,11 +297,11 @@ export default function RegisterPage() {
           <Input label="Password" type="password" required error={errors.password} leftIcon={<Lock className="w-4 h-4" />} value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} />
           <PasswordStrengthIndicator password={form.password} />
           <Input label="Confirm password" type="password" required error={errors.confirmPassword} leftIcon={<Lock className="w-4 h-4" />} value={form.confirmPassword} onChange={(e) => setForm((f) => ({ ...f, confirmPassword: e.target.value }))} />
-          <Button type="submit" fullWidth size="lg" isLoading={isLoading} disabled={!phoneVerified}>
+          <Button type="submit" fullWidth size="lg" isLoading={isLoading}>
             Create account
           </Button>
           {!phoneVerified && (
-            <p className="text-body-sm text-text-secondary text-center -mt-2">Verify your phone number to create an account.</p>
+            <p className="text-body-sm text-text-secondary text-center -mt-2">Verify your phone number for faster checkout (optional).</p>
           )}
         </form>
 
