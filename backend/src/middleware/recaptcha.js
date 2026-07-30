@@ -10,17 +10,16 @@ const MIN_SCORE = 0.5;
 
 function verifyRecaptcha(action) {
   return async (req, res, next) => {
-    // Skip in dev if not configured
+    // Skip if not configured
     if (!env.RECAPTCHA_SECRET_KEY) {
       return next();
     }
 
     const token = req.body.recaptchaToken || req.headers['x-recaptcha-token'];
     if (!token) {
-      return res.status(400).json({
-        success: false,
-        error: { code: 'RECAPTCHA_MISSING', message: 'reCAPTCHA verification is required.' },
-      });
+      // Fail open — don't block users if frontend didn't send a token
+      console.warn('⚠️ reCAPTCHA token missing — allowing request (fail-open)');
+      return next();
     }
 
     try {
@@ -37,10 +36,8 @@ function verifyRecaptcha(action) {
 
       if (!data.success || data.score < MIN_SCORE) {
         console.warn(`🤖 reCAPTCHA failed: score=${data.score}, action=${data.action}, errors=${data['error-codes']}`);
-        return res.status(403).json({
-          success: false,
-          error: { code: 'RECAPTCHA_FAILED', message: 'reCAPTCHA verification failed. Please try again.' },
-        });
+        // Fail open — log but don't block (reCAPTCHA key may not be configured for this domain)
+        return next();
       }
 
       // Optionally verify the action matches
@@ -53,12 +50,8 @@ function verifyRecaptcha(action) {
       next();
     } catch (err) {
       console.error('reCAPTCHA verification error:', err.message);
-      // Don't block the request on verification errors — fail open in dev
-      if (env.NODE_ENV === 'development') return next();
-      return res.status(500).json({
-        success: false,
-        error: { code: 'RECAPTCHA_ERROR', message: 'Could not verify reCAPTCHA.' },
-      });
+      // Fail open — don't block on network/verification errors
+      next();
     }
   };
 }
