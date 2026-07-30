@@ -16,17 +16,32 @@ let firebaseApp;
 function getFirebaseAdmin() {
   if (firebaseApp) return firebaseApp;
 
-  const serviceAccountPath = env.FIREBASE_SERVICE_ACCOUNT_PATH;
-  if (!serviceAccountPath) {
-    console.warn('⚠️  FIREBASE_SERVICE_ACCOUNT_PATH not set — Firebase features disabled.');
+  let serviceAccount;
+
+  // Option 1: Service account JSON passed directly as env var (for cloud deployments)
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    try {
+      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+    } catch (err) {
+      console.error('❌ Failed to parse FIREBASE_SERVICE_ACCOUNT_JSON:', err.message);
+      return null;
+    }
+  }
+  // Option 2: Service account file path (for local development)
+  else if (env.FIREBASE_SERVICE_ACCOUNT_PATH) {
+    const absolutePath = path.isAbsolute(env.FIREBASE_SERVICE_ACCOUNT_PATH)
+      ? env.FIREBASE_SERVICE_ACCOUNT_PATH
+      : path.resolve(__dirname, '../../', env.FIREBASE_SERVICE_ACCOUNT_PATH);
+    try {
+      serviceAccount = require(absolutePath);
+    } catch (err) {
+      console.warn('⚠️  Firebase service account file not found:', absolutePath);
+      return null;
+    }
+  } else {
+    console.warn('⚠️  Firebase not configured — set FIREBASE_SERVICE_ACCOUNT_JSON or FIREBASE_SERVICE_ACCOUNT_PATH');
     return null;
   }
-
-  const absolutePath = path.isAbsolute(serviceAccountPath)
-    ? serviceAccountPath
-    : path.resolve(__dirname, '../../', serviceAccountPath);
-
-  const serviceAccount = require(absolutePath);
 
   firebaseApp = admin.initializeApp({
     credential: admin.cert(serviceAccount),
