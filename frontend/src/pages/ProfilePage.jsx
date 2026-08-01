@@ -238,29 +238,17 @@ export default function ProfilePage() {
 
           {/* Phone with OTP verification */}
           <div className="flex flex-col gap-1">
-            <div className="flex items-end gap-2">
-              <div className="flex-1">
-                <Input
-                  label="Phone"
-                  required
-                  leftIcon={<Phone className="w-4 h-4" />}
-                  value={profileForm.phone}
-                  error={phoneError}
-                  disabled={phoneVerified && !isEditingPhone}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-                    setProfileForm((f) => ({ ...f, phone: val }));
-                    if (val !== user?.phone) {
-                      setPhoneVerified(false);
-                      setPhoneVerificationToken(null);
-                      setOtpSent(false);
-                      setOtpCode('');
-                      setPhoneError('');
-                      setOtpError('');
-                    }
-                  }}
-                />
-            </div>
+            <Input
+              label="Phone"
+              required
+              leftIcon={<Phone className="w-4 h-4" />}
+              value={profileForm.phone}
+              error={phoneError}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                setProfileForm((f) => ({ ...f, phone: val }));
+              }}
+            />
             {!profileForm.phone && (
               <p className="text-body-sm text-text-secondary mt-1">Add a phone number for delivery updates and order verification.</p>
             )}
