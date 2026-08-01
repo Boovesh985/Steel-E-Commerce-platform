@@ -104,10 +104,9 @@ export default function CheckoutPage() {
     );
   };
 
-  // Pre-checkout: profile completeness checks (phone only — no email verification needed)
+  // Pre-checkout: profile completeness checks (just need a phone number)
   const missingRequirements = [];
   if (!user?.phone) missingRequirements.push('Add a phone number');
-  else if (!user?.phoneVerified) missingRequirements.push('Verify your phone number');
   const canPlaceOrder = missingRequirements.length === 0;
 
   return (
