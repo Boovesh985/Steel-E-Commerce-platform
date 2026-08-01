@@ -35,13 +35,7 @@ export default function LoginPage() {
     setErrors({});
     setIsLoading(true);
     try {
-      // Fix #7: Handle reCAPTCHA failure
       const recaptchaToken = await getToken('login');
-      if (recaptchaToken === null) {
-        useToastStore.getState().error('Security verification unavailable. Please disable ad blockers and try again.');
-        setIsLoading(false);
-        return;
-      }
       const data = await authApi.login({ ...form, recaptchaToken });
       login({ user: data.user, accessToken: data.accessToken, refreshToken: data.refreshToken });
       queryClient.invalidateQueries({ queryKey: cartKeys.all });

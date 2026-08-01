@@ -132,13 +132,8 @@ export default function RegisterPage() {
     setErrors({});
     setIsLoading(true);
     try {
-      // Fix #7: Handle reCAPTCHA failure
+      // Get reCAPTCHA token — if null, still try (backend will return a clear error)
       const recaptchaToken = await getToken('register');
-      if (recaptchaToken === null) {
-        useToastStore.getState().error('Security verification unavailable. Please disable ad blockers and try again.');
-        setIsLoading(false);
-        return;
-      }
       const { confirmPassword, gstin, ...rest } = form;
       const payload = { ...rest, gstin: gstin || undefined, phoneVerificationToken, recaptchaToken };
       const data = await authApi.register(payload);
