@@ -231,6 +231,9 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {errors.form && (
+            <div className="bg-danger/10 text-danger text-body-sm rounded-standard px-3 py-2">{errors.form}</div>
+          )}
           <Input label="Full name" required error={errors.name} leftIcon={<User className="w-4 h-4" />} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
           <Input label="Email" type="email" required error={errors.email} leftIcon={<Mail className="w-4 h-4" />} value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} />
 
