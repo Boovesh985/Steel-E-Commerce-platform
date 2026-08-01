@@ -260,21 +260,6 @@ export default function ProfilePage() {
                     }
                   }}
                 />
-              </div>
-              {/* Show verified badge if phone matches saved and is verified */}
-              {user?.phoneVerified && profileForm.phone === user?.phone ? (
-                <div className="flex items-center gap-1.5 px-3 py-2 h-11 bg-green-50 text-green-700 rounded-lg border border-green-200">
-                  <CheckCircle2 className="w-4 h-4 text-green-600" />
-                  <span className="text-body-sm font-semibold">Verified</span>
-                </div>
-              ) : profileForm.phone && PHONE_REGEX.test(profileForm.phone) ? (
-                <div className="flex items-center gap-1 h-11 px-3 text-amber-600">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M12 3a9 9 0 110 18 9 9 0 010-18z" />
-                  </svg>
-                  <span className="text-body-sm font-medium whitespace-nowrap">Unverified</span>
-                </div>
-              ) : null}
             </div>
             {!profileForm.phone && (
               <p className="text-body-sm text-text-secondary mt-1">Add a phone number for delivery updates and order verification.</p>
