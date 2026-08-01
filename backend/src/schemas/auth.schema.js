@@ -19,19 +19,19 @@ const registerSchema = z.object({
   phone: z.string().regex(/^[6-9]\d{9}$/, 'Invalid Indian phone number (10 digits starting with 6-9)'),
   password: strongPassword,
   gstin: z.string().regex(/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}\d[Z]{1}[A-Z\d]{1}$/, 'Invalid GSTIN format').optional().nullable(),
-  phoneVerificationToken: z.string().optional(),
-  recaptchaToken: z.string().optional(),
+  phoneVerificationToken: z.string().optional().nullable(),
+  recaptchaToken: z.string().optional().nullable(),
 }).strip();
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
-  recaptchaToken: z.string().optional(),
+  recaptchaToken: z.string().optional().nullable(),
 }).strip();
 
 const googleAuthSchema = z.object({
   idToken: z.string().min(1, 'Firebase ID token is required'),
-  recaptchaToken: z.string().optional(),
+  recaptchaToken: z.string().optional().nullable(),
 }).strip();
 
 const refreshSchema = z.object({
@@ -40,7 +40,7 @@ const refreshSchema = z.object({
 
 const forgotPasswordSchema = z.object({
   email: z.string().email('Invalid email address'),
-  recaptchaToken: z.string().optional(),
+  recaptchaToken: z.string().optional().nullable(),
 }).strip();
 
 const resetPasswordSchema = z.object({
