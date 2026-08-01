@@ -1,13 +1,20 @@
 import axios from 'axios';
+import { Capacitor } from '@capacitor/core';
 import { useAuthStore } from '../stores/authStore';
 
 export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
 
+const defaultHeaders = { 'Content-Type': 'application/json' };
+
+// Tell the backend this is a native mobile app so it can skip reCAPTCHA
+// (reCAPTCHA v3 doesn't work in Capacitor WebViews — origin is https://localhost)
+if (Capacitor.isNativePlatform()) {
+  defaultHeaders['X-App-Platform'] = 'capacitor';
+}
+
 const apiClient = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: defaultHeaders,
   timeout: 20000,
 });
 

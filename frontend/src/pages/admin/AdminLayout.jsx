@@ -50,14 +50,14 @@ export default function AdminLayout() {
       </aside>
 
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-text text-white flex items-center justify-between px-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-text text-white flex items-center justify-between px-4 safe-top" style={{ minHeight: '3.5rem', paddingBottom: '0.25rem' }}>
         <span className="text-label-md">Admin Console</span>
         <button onClick={() => setMobileNavOpen((v) => !v)} aria-label="Toggle admin menu">
           {mobileNavOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
       {mobileNavOpen && (
-        <div className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-text text-white px-3 py-3 flex flex-col gap-1">
+        <div className="lg:hidden fixed left-0 right-0 z-40 bg-text text-white px-3 py-3 flex flex-col gap-1" style={{ top: 'calc(env(safe-area-inset-top, 0px) + 3.5rem)' }}>
           {navItems.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
@@ -77,7 +77,7 @@ export default function AdminLayout() {
         </div>
       )}
 
-      <main className="flex-1 min-w-0 pt-14 lg:pt-0">
+      <main className="flex-1 min-w-0 lg:pt-0" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 3.5rem)' }}>
         <div className="p-4 lg:p-8">
           <Outlet />
         </div>

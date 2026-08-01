@@ -15,6 +15,12 @@ function verifyRecaptcha(action) {
       return next();
     }
 
+    // Skip for native mobile apps — reCAPTCHA v3 can't run in Capacitor WebViews.
+    // Rate limiting still protects these endpoints from abuse.
+    if (req.headers['x-app-platform'] === 'capacitor') {
+      return next();
+    }
+
     const token = req.body.recaptchaToken || req.headers['x-recaptcha-token'];
     if (!token) {
       return res.status(400).json({

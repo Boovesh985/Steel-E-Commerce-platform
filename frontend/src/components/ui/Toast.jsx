@@ -29,7 +29,7 @@ export default function ToastContainer() {
   const dismissToast = useToastStore((s) => s.dismissToast);
 
   return (
-    <div className="fixed top-4 right-4 left-4 sm:left-auto z-[100] flex flex-col gap-2 w-auto sm:w-96">
+    <div className="fixed right-4 left-4 sm:left-auto z-[100] flex flex-col gap-2 w-auto sm:w-96" style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1rem)' }}>
       <AnimatePresence initial={false}>
         {toasts.map((toast) => {
           const Icon = icons[toast.type] || Info;

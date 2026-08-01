@@ -8,7 +8,7 @@ import { useToastStore } from '../stores/toastStore';
 import { apiErrorMessage } from '../api/client';
 import { cartKeys } from '../hooks/useCart';
 import { useRecaptcha } from '../hooks/useRecaptcha';
-import { auth, googleProvider, signInWithPopup } from '../config/firebase';
+import { initiateGoogleSignIn } from '../utils/googleAuth';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 
@@ -58,13 +58,13 @@ export default function LoginPage() {
     setErrors({});
     setGoogleLoading(true);
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const idToken = await result.user.getIdToken();
-      // Fix #4: Sign out of Firebase after getting the token
-      await auth.signOut();
-      // Gap #2: Send reCAPTCHA token with Google auth
+      const result = await initiateGoogleSignIn();
+      // On native, result is null because the page redirects away.
+      // The sign-in is completed in App.jsx via handleGoogleRedirectResult.
+      if (!result) return;
+      // Web flow: we have the idToken from the popup
       const recaptchaToken = await getToken('google_auth');
-      const data = await authApi.googleAuth(idToken, recaptchaToken);
+      const data = await authApi.googleAuth(result.idToken, recaptchaToken);
       login({ user: data.user, accessToken: data.accessToken, refreshToken: data.refreshToken });
       queryClient.invalidateQueries({ queryKey: cartKeys.all });
       useToastStore.getState().success(`Welcome, ${data.user?.name?.split(' ')[0] || ''}.`);

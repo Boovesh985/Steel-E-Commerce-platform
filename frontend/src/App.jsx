@@ -2,7 +2,12 @@ import { useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
 import { App as CapApp } from '@capacitor/app';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from './stores/authStore';
+import { useToastStore } from './stores/toastStore';
+import { authApi } from './api/auth';
+import { cartKeys } from './hooks/useCart';
+import { handleGoogleRedirectResult } from './utils/googleAuth';
 
 import Layout from './components/layout/Layout';
 import HomePage from './pages/HomePage';
@@ -61,8 +66,36 @@ function useBackButton() {
   }, [navigate, location.pathname]);
 }
 
+/**
+ * On native platforms, complete any pending Google Sign-In redirect.
+ * After signInWithRedirect, the Capacitor WebView reloads and we
+ * pick up the Firebase auth result here.
+ */
+function useGoogleRedirect() {
+  const login = useAuthStore((s) => s.login);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    handleGoogleRedirectResult().then(async (result) => {
+      if (!result) return;
+      try {
+        const data = await authApi.googleAuth(result.idToken, null);
+        login({ user: data.user, accessToken: data.accessToken, refreshToken: data.refreshToken });
+        queryClient.invalidateQueries({ queryKey: cartKeys.all });
+        useToastStore.getState().success(`Welcome, ${data.user?.name?.split(' ')[0] || ''}.`);
+        navigate('/');
+      } catch (err) {
+        console.error('Google redirect sign-in failed:', err);
+        useToastStore.getState().error('Google sign-in failed. Please try again.');
+      }
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+}
+
 export default function App() {
   useBackButton();
+  useGoogleRedirect();
   return (
     <Routes>
       <Route element={<Layout />}>
