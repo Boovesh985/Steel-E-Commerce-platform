@@ -146,7 +146,21 @@ export default function RegisterPage() {
       useToastStore.getState().success('Account created. Welcome to AMK Steels.');
       navigate('/');
     } catch (err) {
-      setErrors({ form: apiErrorMessage(err, 'Could not create your account.') });
+      // Show detailed validation errors from the backend if available
+      const details = err?.response?.data?.error?.details;
+      if (Array.isArray(details) && details.length > 0) {
+        const fieldErrors = {};
+        details.forEach(d => {
+          if (d.path) fieldErrors[d.path] = d.message;
+        });
+        if (Object.keys(fieldErrors).length > 0) {
+          setErrors(fieldErrors);
+        } else {
+          setErrors({ form: apiErrorMessage(err, 'Could not create your account.') });
+        }
+      } else {
+        setErrors({ form: apiErrorMessage(err, 'Could not create your account.') });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -220,72 +234,18 @@ export default function RegisterPage() {
           <Input label="Full name" required error={errors.name} leftIcon={<User className="w-4 h-4" />} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
           <Input label="Email" type="email" required error={errors.email} leftIcon={<Mail className="w-4 h-4" />} value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} />
 
-          {/* Phone + OTP verification */}
-          <div>
-            <label className="text-label-md text-text block mb-1.5">
-              Phone<span className="text-danger ml-0.5">*</span>
-            </label>
-            <div className="flex gap-2 items-center">
-              <div className="flex-1">
-                <Input
-                  required
-                  error={errors.phone}
-                  leftIcon={<Phone className="w-4 h-4" />}
-                  value={form.phone}
-                  disabled={phoneVerified}
-                  onChange={(e) => {
-                    setForm((f) => ({ ...f, phone: e.target.value.replace(/\D/g, '').slice(0, 10) }));
-                    if (otpSent) { setOtpSent(false); setOtpCode(''); }
-                    if (phoneVerified) { setPhoneVerified(false); setPhoneVerificationToken(null); }
-                  }}
-                />
-              </div>
-              {!phoneVerified && (
-                <button
-                  id="reg-send-otp-btn"
-                  type="button"
-                  onClick={handleSendOtp}
-                  disabled={sendingOtp || firebaseSending || form.phone.length !== 10 || otpCountdown > 0}
-                  className="h-11 px-4 rounded-standard bg-primary text-white text-body-sm font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0"
-                >
-                  {sendingOtp || firebaseSending ? 'Sending...' : otpCountdown > 0 ? `Resend (${otpCountdown}s)` : otpSent ? 'Resend OTP' : 'Send OTP'}
-                </button>
-              )}
-              {phoneVerified && (
-                <div className="flex items-center gap-1 text-emerald-600 shrink-0">
-                  <CheckCircle2 className="w-5 h-5" />
-                  <span className="text-body-sm font-medium">Verified</span>
-                </div>
-              )}
-            </div>
-            {!errors.phone && !phoneVerified && (
-              <p className="text-body-sm text-text-secondary mt-1.5">10-digit Indian mobile number</p>
-            )}
-
-            {/* OTP Input */}
-            {otpSent && !phoneVerified && (
-              <div className="flex gap-2 items-center mt-3">
-                <div className="flex-1">
-                  <Input
-                    label="Enter OTP"
-                    placeholder="6-digit code"
-                    error={errors.otp}
-                    value={otpCode}
-                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    maxLength={6}
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={handleVerifyOtp}
-                  disabled={verifyingOtp || otpCode.length !== 6}
-                  className="h-11 px-4 rounded-standard bg-emerald-600 text-white text-body-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0 mt-[26px]"
-                >
-                  {verifyingOtp ? 'Verifying...' : 'Verify'}
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Phone */}
+          <Input
+            label="Phone"
+            required
+            error={errors.phone}
+            leftIcon={<Phone className="w-4 h-4" />}
+            value={form.phone}
+            onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value.replace(/\D/g, '').slice(0, 10) }))}
+          />
+          {!errors.phone && (
+            <p className="text-body-sm text-text-secondary -mt-3">10-digit Indian mobile number</p>
+          )}
 
           <Input
             label="GSTIN (optional)"
@@ -300,9 +260,6 @@ export default function RegisterPage() {
           <Button type="submit" fullWidth size="lg" isLoading={isLoading}>
             Create account
           </Button>
-          {!phoneVerified && (
-            <p className="text-body-sm text-text-secondary text-center -mt-2">Verify your phone number for faster checkout (optional).</p>
-          )}
         </form>
 
         {/* Fix #9: Terms of Service */}
