@@ -6,7 +6,7 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/', // Must be '/' for web (nested routes). For Capacitor builds, override with VITE_BASE='./'
+  base: process.env.VITE_BASE || '/', // '/' for web; override with VITE_BASE='./' for Capacitor
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

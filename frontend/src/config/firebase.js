@@ -7,10 +7,6 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
-  signInWithPhoneNumber,
-  RecaptchaVerifier,
 } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -31,5 +27,5 @@ auth.useDeviceLanguage();
 
 const googleProvider = new GoogleAuthProvider();
 
-export { auth, googleProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signInWithPhoneNumber, RecaptchaVerifier };
+export { auth, googleProvider, signInWithPopup };
 
