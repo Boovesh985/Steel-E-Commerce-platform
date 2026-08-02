@@ -34,7 +34,16 @@ import AdminUsers from './pages/admin/AdminUsers';
 
 function RequireAuth({ children }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated());
+  const isHydrated = useAuthStore((s) => s.isHydrated);
   const location = useLocation();
+  // Wait for auth state to load from localStorage before deciding
+  if (!isHydrated) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
   if (!isAuthenticated) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }

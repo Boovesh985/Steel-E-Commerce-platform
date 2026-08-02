@@ -14,7 +14,17 @@ const navItems = [
 
 export default function AdminLayout() {
   const isAdmin = useAuthStore((s) => s.isAdmin());
+  const isHydrated = useAuthStore((s) => s.isHydrated);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  // Wait for auth state to load from localStorage before deciding
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-bg">
+        <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!isAdmin) return <Navigate to="/login" replace />;
 
