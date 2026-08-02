@@ -21,8 +21,9 @@ if (Capacitor.isNativePlatform()) {
     SplashScreen.hide();
   });
   import('@capacitor/status-bar').then(({ StatusBar, Style }) => {
-    StatusBar.setStyle({ style: Style.Dark });
-    StatusBar.setBackgroundColor({ color: '#0F172A' });
+    StatusBar.setStyle({ style: Style.Light }); // dark icons for light background
+    StatusBar.setBackgroundColor({ color: '#FFFFFF' });
+    StatusBar.setOverlaysWebView({ overlay: false }); // don't overlap content
   });
 }
 
