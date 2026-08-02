@@ -43,9 +43,6 @@ async function checkout(userId, addressId, buyerGstin, notes) {
   if (!user.phone) {
     throw new AppError(400, 'PHONE_REQUIRED', 'Please add a phone number to your profile before placing an order.');
   }
-  if (!user.phoneVerified) {
-    throw new AppError(400, 'PHONE_NOT_VERIFIED', 'Please verify your phone number before placing an order.');
-  }
 
   // 1. Fetch cart with items
   const cart = await authPrisma.cart.findUnique({
