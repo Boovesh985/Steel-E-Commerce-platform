@@ -88,7 +88,25 @@ export default function CartPage() {
                     >
                       <Minus className="w-3.5 h-3.5" />
                     </button>
-                    <span className="w-10 text-center text-body-sm font-mono">{item.quantity}</span>
+                    <input
+                      type="number"
+                      min={item.minOrderQty || 1}
+                      defaultValue={item.quantity}
+                      key={item.quantity}
+                      onBlur={(e) => {
+                        const val = parseInt(e.target.value, 10);
+                        const min = item.minOrderQty || 1;
+                        if (!isNaN(val) && val >= min && val !== item.quantity) {
+                          updateItem.mutate({ itemId: item.id, payload: { quantity: val } });
+                        } else if (isNaN(val) || val < min) {
+                          e.target.value = item.quantity;
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') e.target.blur();
+                      }}
+                      className="w-12 text-center text-body-sm font-mono bg-transparent outline-none border-x border-border h-8 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
                     <button
                       onClick={() => updateItem.mutate({ itemId: item.id, payload: { quantity: item.quantity + 1 } })}
                       className="w-8 h-8 flex items-center justify-center text-text-secondary"

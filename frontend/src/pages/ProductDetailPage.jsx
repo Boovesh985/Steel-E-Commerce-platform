@@ -151,7 +151,18 @@ export default function ProductDetailPage() {
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="w-12 text-center text-body-md font-mono">{quantity}</span>
+                  <input
+                    type="number"
+                    min={minQty}
+                    value={quantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (!isNaN(val) && val >= minQty) setQuantity(val);
+                      else if (e.target.value === '') setQuantity(minQty);
+                    }}
+                    onBlur={() => { if (quantity < minQty) setQuantity(minQty); }}
+                    className="w-16 text-center text-body-md font-mono bg-transparent outline-none border-x border-border h-11 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
                   <button
                     onClick={() => setQuantity((q) => q + 1)}
                     className="w-10 h-11 flex items-center justify-center text-text-secondary hover:text-text"
