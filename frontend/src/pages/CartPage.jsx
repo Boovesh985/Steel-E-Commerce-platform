@@ -93,6 +93,7 @@ export default function CartPage() {
                       min={item.minOrderQty || 1}
                       defaultValue={item.quantity}
                       key={item.quantity}
+                      onFocus={(e) => e.target.select()}
                       onBlur={(e) => {
                         const val = parseInt(e.target.value, 10);
                         const min = item.minOrderQty || 1;

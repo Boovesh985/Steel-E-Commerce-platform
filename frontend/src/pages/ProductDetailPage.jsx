@@ -155,12 +155,17 @@ export default function ProductDetailPage() {
                     type="number"
                     min={minQty}
                     value={quantity}
+                    onFocus={(e) => e.target.select()}
                     onChange={(e) => {
-                      const val = parseInt(e.target.value, 10);
-                      if (!isNaN(val) && val >= minQty) setQuantity(val);
-                      else if (e.target.value === '') setQuantity(minQty);
+                      const raw = e.target.value;
+                      if (raw === '') { setQuantity(''); return; }
+                      const val = parseInt(raw, 10);
+                      if (!isNaN(val) && val >= 0) setQuantity(val);
                     }}
-                    onBlur={() => { if (quantity < minQty) setQuantity(minQty); }}
+                    onBlur={() => {
+                      const val = parseInt(quantity, 10);
+                      setQuantity(!isNaN(val) && val >= minQty ? val : minQty);
+                    }}
                     className="w-16 text-center text-body-md font-mono bg-transparent outline-none border-x border-border h-11 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <button
