@@ -32,6 +32,8 @@ export const useAuthStore = create()(
         set({ user: null, accessToken: null, refreshToken: null });
         // Also clear the cart badge so stale count doesn't persist
         try { const { useCartStore } = require('./cartStore'); useCartStore.getState().reset(); } catch {}
+        // Clear Google auth session so account picker shows on next sign-in
+        import('../utils/googleAuth').then(({ signOutGoogle }) => signOutGoogle()).catch(() => {});
       },
 
       setHydrated: () => set({ isHydrated: true }),

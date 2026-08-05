@@ -1,11 +1,10 @@
 /**
  * Google Sign-In utility.
  *
- * - Web: Uses Firebase signInWithPopup (works in regular browsers).
+ * - Web: Uses Firebase signInWithPopup with prompt=select_account
+ *   so the account picker always shows (even after sign out).
  * - Android (Capacitor): Uses @codetrix-studio/capacitor-google-auth
- *   which opens the native Google account picker. The returned Google
- *   ID token is exchanged for a Firebase credential to get a Firebase
- *   ID token that our backend can verify.
+ *   which opens the native Google account picker.
  */
 import { Capacitor } from '@capacitor/core';
 import {
@@ -14,6 +13,9 @@ import {
   signInWithPopup,
 } from '../config/firebase';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+
+// Force account selection every time (don't auto-pick last account)
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 /**
  * Initiate Google Sign-In.
@@ -31,6 +33,9 @@ export async function initiateGoogleSignIn() {
       grantOfflineAccess: false,
     });
 
+    // Sign out first to force account picker on next sign-in
+    try { await GoogleAuth.signOut(); } catch {}
+
     const googleUser = await GoogleAuth.signIn();
     const googleIdToken = googleUser.authentication.idToken;
 
@@ -44,9 +49,24 @@ export async function initiateGoogleSignIn() {
     return { idToken: firebaseIdToken };
   }
 
-  // Web: use Firebase popup (existing behavior)
+  // Web: use Firebase popup — prompt=select_account forces account picker
   const result = await signInWithPopup(auth, googleProvider);
   const idToken = await result.user.getIdToken();
   await auth.signOut();
   return { idToken };
+}
+
+/**
+ * Sign out of Google on the native platform.
+ * Call this when the user signs out of our app.
+ */
+export async function signOutGoogle() {
+  if (Capacitor.isNativePlatform()) {
+    try {
+      const { GoogleAuth } = await import('@codetrix-studio/capacitor-google-auth');
+      await GoogleAuth.signOut();
+    } catch {}
+  }
+  // Firebase sign out (clears any cached Firebase auth state)
+  try { await auth.signOut(); } catch {}
 }
