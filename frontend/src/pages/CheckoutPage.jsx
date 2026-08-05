@@ -104,9 +104,10 @@ export default function CheckoutPage() {
     );
   };
 
-  // Pre-checkout: profile completeness checks (just need a phone number)
+  // Pre-checkout: profile completeness checks
   const missingRequirements = [];
   if (!user?.phone) missingRequirements.push('Add a phone number');
+  if (!selectedAddressId) missingRequirements.push('Select or add a delivery address');
   const canPlaceOrder = missingRequirements.length === 0;
 
   return (
