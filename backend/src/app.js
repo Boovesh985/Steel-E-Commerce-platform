@@ -23,6 +23,8 @@ const otpRoutes = require('./routes/otp.routes');
 const app = express();
 
 // ── Security ────────────────────────────────────────────────────────────
+// Trust first proxy (Render's reverse proxy) so rate-limiter reads real client IP
+app.set('trust proxy', 1);
 app.use(helmet());
 
 // CORS — restricted to allowed origins
