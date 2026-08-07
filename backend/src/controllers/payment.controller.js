@@ -4,6 +4,7 @@
 const { authPrisma } = require('../config/database');
 const { AppError } = require('../middleware/errorHandler');
 const paymentService = require('../services/payment.service');
+const { sendOrderReceiptEmail } = require('../services/email.service');
 
 // POST /api/payments/create-order
 async function createPaymentOrder(req, res, next) {
@@ -80,8 +81,19 @@ async function verifyPayment(req, res, next) {
       include: { items: true, trackingEvents: { orderBy: { timestamp: 'asc' } } },
     });
 
+    // Send billing receipt email (fire-and-forget — don't block payment response)
+    const user = await authPrisma.user.findUnique({ where: { id: req.user.id }, select: { email: true, name: true } });
+    if (user?.email) {
+      sendOrderReceiptEmail({
+        to: user.email,
+        userName: user.name,
+        order: updated,
+      }).catch((err) => console.error('📧 Receipt email error (non-blocking):', err.message));
+    }
+
     res.json({ success: true, data: updated });
   } catch (err) { next(err); }
 }
 
 module.exports = { createPaymentOrder, verifyPayment };
+
