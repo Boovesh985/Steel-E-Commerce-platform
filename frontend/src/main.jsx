@@ -10,8 +10,13 @@ import './index.css';
 // This lets the full UI (products, cart, checkout, orders, admin) be explored
 // with realistic data before a real API and database exist.
 if (import.meta.env.DEV && import.meta.env.VITE_USE_MOCKS !== 'false') {
-  const { enableMocks } = await import('./mocks/handlers.js');
-  enableMocks();
+  try {
+    const { enableMocks } = await import('./mocks/handlers.js');
+    enableMocks();
+  } catch {
+    // Mocks module missing or failed — continue without mocks
+    console.warn('⚠ Mock handlers not found or failed to load. Running against real API.');
+  }
 }
 
 // ---- Capacitor native plugin initialization ----

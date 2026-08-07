@@ -214,11 +214,9 @@ async function listInventory(req, res, next) {
     if (lowStock === 'true') {
       // Use raw SQL to compare quantityAvailable <= reorderLevel (per-row threshold)
       // Prisma's where clause can't compare two columns directly
+      // Using $queryRaw tagged template — values are auto-parameterized (safe from injection)
       const warehouseFilter = warehouseId
-        ? catalogPrisma.$queryRawUnsafe(
-            `SELECT i.id FROM "Inventory" i WHERE i."quantityAvailable" <= i."reorderLevel" AND i."warehouseId" = $1`,
-            warehouseId
-          )
+        ? catalogPrisma.$queryRaw`SELECT i.id FROM "Inventory" i WHERE i."quantityAvailable" <= i."reorderLevel" AND i."warehouseId" = ${warehouseId}`
         : catalogPrisma.$queryRaw`SELECT i.id FROM "Inventory" i WHERE i."quantityAvailable" <= i."reorderLevel"`;
 
       const lowStockIds = (await warehouseFilter).map((r) => r.id);

@@ -149,11 +149,25 @@ async function refresh(req, res, next) {
       throw new AppError(401, 'UNAUTHORIZED', 'User not found or disabled.');
     }
 
+    // ── Token rotation: revoke old refresh token, issue new pair ──
+    // Delete the used refresh token so it can never be replayed
+    await authPrisma.refreshToken.delete({ where: { id: storedToken.id } });
+
     const newAccessToken = authService.generateAccessToken(user);
+    const newRefreshToken = authService.generateRefreshToken(user);
+
+    // Store the new refresh token hash
+    await authPrisma.refreshToken.create({
+      data: {
+        userId: user.id,
+        tokenHash: authService.hashToken(newRefreshToken),
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
 
     res.json({
       success: true,
-      data: { accessToken: newAccessToken },
+      data: { accessToken: newAccessToken, refreshToken: newRefreshToken },
     });
   } catch (err) {
     next(err);
