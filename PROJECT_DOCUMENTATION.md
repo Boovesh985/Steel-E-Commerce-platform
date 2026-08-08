@@ -553,9 +553,9 @@ try {
 | `CORS_ORIGIN` | Allowed HTTP CORS Origin | `https://amk-steels.vercel.app` |
 | `RAZORPAY_KEY_ID` | Razorpay Merchant API Key | `rzp_test_xxxxxxxxxxxxx` |
 | `RAZORPAY_KEY_SECRET` | Razorpay Merchant Secret | `your-razorpay-secret` |
-| `RESEND_API_KEY` | Transactional Email API Key | `re_xxxxxxxxxxxx...` |
-| `RECAPTCHA_SECRET_KEY` | Google reCAPTCHA Secret Key | `6Lxxxxxxxxxxxxxxxxxxxxxxxxxx...` |
-| `FAST2SMS_API_KEY` | SMS Provider API Key | `your-fast2sms-api-key...` |
+| `RESEND_API_KEY` | Transactional Email API Key | `re_xxxxxxxxxxxx` |
+| `RECAPTCHA_SECRET_KEY` | Google reCAPTCHA Secret Key | `6Lxxxxxxxxxxxxxxxxxxxxxxxxxx` |
+| `FAST2SMS_API_KEY` | SMS Provider API Key | `your-fast2sms-api-key` |
 
 ---
 

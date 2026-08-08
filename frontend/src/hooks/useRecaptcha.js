@@ -7,7 +7,7 @@
  */
 import { useCallback, useRef } from 'react';
 
-const SITE_KEY = 'VITE_RECAPTCHA_SITE_KEY_HERE';
+const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '';
 
 let loadPromise = null;
 
