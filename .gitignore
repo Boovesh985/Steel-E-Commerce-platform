@@ -48,3 +48,6 @@ Thumbs.db
 # ── Misc ──
 backend/data/
 backend/scripts/create-neon-dbs.js
+backend/scripts/_*.js
+backend/scripts/_*.txt
+backend_routes_and_schema.md

@@ -405,7 +405,7 @@ async function getDashboard(req, res, next) {
         take: 20,
       }),
       authPrisma.order.aggregate({
-        where: { paymentStatus: 'PAID' },
+        where: { status: { notIn: ['CANCELLED', 'RETURNED'] } },
         _sum: { totalAmount: true },
       }),
     ]);
@@ -420,7 +420,7 @@ async function getDashboard(req, res, next) {
         }, {}),
         totalUsers,
         totalProducts,
-        totalRevenue: revenueResult._sum.totalAmount || 0,
+        totalRevenue: Number(revenueResult._sum.totalAmount || 0),
         recentOrders,
         lowStockItems: lowStockItems.map((inv) => ({
           id: inv.id,
