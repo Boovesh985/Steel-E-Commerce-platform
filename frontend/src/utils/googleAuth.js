@@ -28,7 +28,7 @@ export async function initiateGoogleSignIn() {
 
     // Initialize on first call
     await GoogleAuth.initialize({
-      clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || 'your-google-client-id.apps.googleusercontent.com',
+      clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || '184908462149-ebvaasp410gg4qhv83756qh5kdsrn1ug.apps.googleusercontent.com',
       scopes: ['profile', 'email'],
       grantOfflineAccess: false,
     });

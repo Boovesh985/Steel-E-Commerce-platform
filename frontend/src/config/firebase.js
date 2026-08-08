@@ -12,7 +12,7 @@ import {
 // Firebase web config — these are PUBLIC keys (restricted by Firebase Security Rules, not secrecy).
 // Using env vars allows different Firebase projects per environment.
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'your-firebase-api-key',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyDB7A1vNojGbVzeYAXtbiDssyBlyIrxMts',
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'steel-app-8eec1.firebaseapp.com',
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'steel-app-8eec1',
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'steel-app-8eec1.firebasestorage.app',
