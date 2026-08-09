@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏗️ AMK Steels — Industrial Steel E-Commerce Platform
+# Steel E-Commerce Platform
 
 **A production-grade B2C/B2B marketplace for industrial steel products**
 
@@ -18,7 +18,7 @@ Ships as both a **responsive website** and a **signed Android APK** from a singl
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 <div align="center">
 
@@ -35,9 +35,9 @@ Ships as both a **responsive website** and a **signed Android APK** from a singl
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🛒 Customer Experience
+### Customer Experience
 - **Product Catalog** — Browse 273+ real steel products with specifications, pricing, and stock status
 - **Smart Search** — Search by product name, grade, specifications, or SKU
 - **Category Navigation** — Pipes (Round, Square, Rectangle), TMT Bars, Structural Steel, Sheets & Plates
@@ -45,26 +45,26 @@ Ships as both a **responsive website** and a **signed Android APK** from a singl
 - **Wishlist** — Save products for later
 - **Order Tracking** — Full lifecycle: Pending → Confirmed → Processing → Shipped → Delivered
 
-### 💳 Payments & Billing
+### Payments & Billing
 - **Razorpay Integration** — Secure payment processing with HMAC signature verification
 - **Billing Receipts** — Automated email receipts sent after successful payment
 - **Order Cancellation** — Automatic Razorpay refund + inventory restoration
 
-### 🔐 Authentication & Security
+### Authentication & Security
 - **Multi-method Auth** — Email/password, Google Sign-In, Phone OTP
 - **JWT with Rotation** — Short-lived access tokens (15min) + rotating refresh tokens (30 days)
 - **Argon2id Hashing** — OWASP-recommended password hashing with bcrypt auto-migration
 - **reCAPTCHA v3** — Bot protection on all auth endpoints
 - **Rate Limiting** — Auth: 15 req/15min, API: 200 req/15min
 
-### 👨‍💼 Admin Dashboard
+### Admin Dashboard
 - **Analytics Dashboard** — Revenue, orders, inventory metrics, top-selling products
 - **Product Management** — CRUD with dynamic specifications builder
 - **Inventory Control** — Real-time stock management by warehouse
 - **Order Fulfillment** — Status transitions with automatic tracking events
 - **User Management** — Role elevation, account status controls
 
-### 📱 Mobile App
+### Mobile App
 - **Android APK** — Native hybrid app via Capacitor (same React codebase)
 - **Google Sign-In** — Native account picker integration
 - **Status Bar** — Properly configured for Android notch/status bar
@@ -72,7 +72,7 @@ Ships as both a **responsive website** and a **signed Android APK** from a singl
 
 ---
 
-## 🏛️ Architecture
+## Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -108,7 +108,7 @@ Ships as both a **responsive website** and a **signed Android APK** from a singl
 
 ---
 
-## 🔄 Cross-Database Checkout Algorithm
+## Cross-Database Checkout Algorithm
 
 The checkout system implements a **Two-Phase Atomic Stock Reservation with Compensating Transactions** to maintain consistency across two databases:
 
@@ -145,7 +145,7 @@ The checkout system implements a **Two-Phase Atomic Stock Reservation with Compe
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -162,7 +162,7 @@ The checkout system implements a **Two-Phase Atomic Stock Reservation with Compe
 
 ---
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 amk-steels/
@@ -204,7 +204,7 @@ amk-steels/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - **Node.js** 20+ and npm
@@ -234,7 +234,7 @@ cp frontend/.env.example frontend/.env
 ```
 
 <details>
-<summary><b>📋 Backend Environment Variables</b></summary>
+<summary><b>Backend Environment Variables</b></summary>
 
 | Variable | Description |
 |----------|-------------|
@@ -253,7 +253,7 @@ cp frontend/.env.example frontend/.env
 </details>
 
 <details>
-<summary><b>📋 Frontend Environment Variables</b></summary>
+<summary><b>Frontend Environment Variables</b></summary>
 
 | Variable | Description |
 |----------|-------------|
@@ -294,7 +294,7 @@ cd backend && npm run dev
 cd frontend && npm run dev
 ```
 
-Visit **http://localhost:5173** 🚀
+Visit **http://localhost:5173**
 
 ### 6. Build Android APK
 
@@ -307,7 +307,7 @@ cd android && ./gradlew assembleRelease
 
 ---
 
-## 🔒 Security Features
+## Security Features
 
 | Feature | Implementation |
 |---------|---------------|
@@ -324,7 +324,7 @@ cd android && ./gradlew assembleRelease
 
 ---
 
-## 📡 API Endpoints
+## API Endpoints
 
 <details>
 <summary><b>Authentication (8 endpoints)</b></summary>
@@ -392,7 +392,7 @@ cd android && ./gradlew assembleRelease
 
 ---
 
-## 🚢 Deployment
+## Deployment
 
 | Service | Platform | URL |
 |---------|----------|-----|
@@ -404,15 +404,15 @@ cd android && ./gradlew assembleRelease
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 For comprehensive technical documentation covering database schemas, API reference, checkout algorithm, payment flow, and deployment infrastructure, see:
 
-📄 **[PROJECT_DOCUMENTATION.md](./PROJECT_DOCUMENTATION.md)** (570+ lines of detailed documentation)
+**[PROJECT_DOCUMENTATION.md](./PROJECT_DOCUMENTATION.md)** (570+ lines of detailed documentation)
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -422,7 +422,7 @@ For comprehensive technical documentation covering database schemas, API referen
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
 
